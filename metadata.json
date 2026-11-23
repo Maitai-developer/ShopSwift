@@ -1,0 +1,6 @@
+{
+  "name": "ShopSwift",
+  "description": "Modern e-commerce shopping app with real-time catalog, Stripe checkout, and admin inventory management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

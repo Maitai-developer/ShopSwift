@@ -1,0 +1,104 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Catalog product item managed by admin and displayed to shoppers.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Product display title (2-120 chars)." },
+        "description": { "type": "string", "description": "Detailed product description (2-1000 chars)." },
+        "priceCents": { "type": "integer", "description": "Unit price in USD cents." },
+        "category": {
+          "type": "string",
+          "enum": ["Audio", "Wearables", "Bags", "Accessories", "Home Tech"],
+          "description": "Product category."
+        },
+        "imageKey": { "type": "string", "description": "Bundled drawable key or 'custom'." },
+        "imageUrl": { "type": "string", "description": "Optional HTTPS product image URL." },
+        "stock": { "type": "integer", "description": "Available inventory count." },
+        "active": { "type": "boolean", "description": "Whether product is visible in storefront." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp on create." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp on update." }
+      },
+      "required": ["title", "description", "priceCents", "category", "imageKey", "stock", "active", "createdAt", "updatedAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated shopper profile stored per user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID." },
+        "displayName": { "type": "string", "description": "User display name." },
+        "email": { "type": "string", "description": "User email address." },
+        "photoUrl": { "type": "string", "description": "Optional profile avatar URL." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp on create." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp on update." }
+      },
+      "required": ["userId", "displayName", "email", "createdAt", "updatedAt"]
+    },
+    "CartItem": {
+      "title": "CartItem",
+      "description": "Item inside a user's personal shopping cart.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Product title snapshot." },
+        "priceCents": { "type": "integer", "description": "Unit price in cents snapshot." },
+        "quantity": { "type": "integer", "description": "Quantity in cart (1-99)." },
+        "category": { "type": "string", "description": "Product category." },
+        "imageKey": { "type": "string", "description": "Bundled drawable key." },
+        "imageUrl": { "type": "string", "description": "Optional HTTPS image URL." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp on create." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp on update." }
+      },
+      "required": ["title", "priceCents", "quantity", "category", "imageKey", "createdAt", "updatedAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Completed checkout order with Stripe payment metadata.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Buyer Firebase Auth UID." },
+        "customerEmail": { "type": "string", "description": "Buyer email address." },
+        "customerName": { "type": "string", "description": "Buyer full name." },
+        "shippingAddress": { "type": "string", "description": "Delivery street address." },
+        "itemsSummary": { "type": "string", "description": "Human-readable ordered items summary." },
+        "itemCount": { "type": "integer", "description": "Total number of units ordered." },
+        "subtotalCents": { "type": "integer", "description": "Order subtotal in cents." },
+        "shippingCents": { "type": "integer", "description": "Shipping fee in cents." },
+        "totalCents": { "type": "integer", "description": "Total charged in cents." },
+        "paymentMethod": {
+          "type": "string",
+          "enum": ["stripe_payment_sheet", "stripe_sandbox"],
+          "description": "Stripe checkout mode."
+        },
+        "paymentReference": { "type": "string", "description": "Stripe PaymentIntent or sandbox ID." },
+        "status": {
+          "type": "string",
+          "enum": ["PAID", "PROCESSING", "SHIPPED", "DELIVERED"],
+          "description": "Order fulfillment status."
+        },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp on create." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp on update." }
+      },
+      "required": ["userId", "customerEmail", "customerName", "shippingAddress", "itemsSummary", "itemCount", "subtotalCents", "shippingCents", "totalCents", "paymentMethod", "paymentReference", "status", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Storefront product catalog."
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Shopper profile records."
+    },
+    "/users/{userId}/cart/{productId}": {
+      "schema": { "$ref": "#/entities/CartItem" },
+      "description": "Per-user shopping cart items."
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Customer orders viewable by the buyer and admin."
+    }
+  }
+}
